@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <title>Dynamic map</title>
+  
+  <link href="./css/ol.css" rel="stylesheet">
+  <link rel="stylesheet" href="./css/ol-ext.css" />
+
+   <script src="js/proj4.js"></script>
+   <script src="js/proj4-src.js"></script>
+    <link rel="stylesheet" href="./css/jquery-ui.css">
+     <script src="js/jquery-1.12.4.js"></script>
+  <script src="js/jquery-ui.js"></script>
+  
+  <link rel="stylesheet" href="./css/bootstrap.min.css">
+  <link rel="stylesheet" href="./css/bootstrap-grid.min.css">
+  <link rel="stylesheet" href="./css/bootstrap-reboot.min.css">
+  
+  <link rel="stylesheet" href="./css/menu.css">
+  
+  <script src="./js/bootstrap.min.js"></script>
+	
+  <style>
+  .ui-draggable, .ui-droppable {
+	background-position: top;
+}
+  .navbar-expand-lg .navbar-nav .nav-link{
+    padding-left: 5px;
+    font-size: 15px;
+  }
+  body {
+    font-size: 0.75rem;
+    
+  }
+  #collapseComponents11 {
+      margin-bottom: 0;
+      margin-left: -40px;
+  }
+  #collapseComponents12 {
+      margin-bottom: 0;
+      margin-left: -40px;
+  }
+  .navbar-brand {
+    display: block;
+padding-top: .3125rem;
+padding-bottom: .3125rem;
+margin-right: 1rem;
+font-size: 1.25rem;
+line-height: inherit;
+white-space: nowrap;
+margin-left: 15px;
+position: relative;
+float: left;
+}
+.ol-popup {
+    background-color: rgba(0,0,0,0.75);
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px 0;
+    display: inline-flex;
+    width: auto;
+}
+.ol-popup-content {
+    border: 0px;
+    padding: 0;
+}
+.tooltip {
+        position: relative;
+        background: rgba(0, 0, 0, 0.5);
+        border-radius: 4px;
+        color: white;
+        padding: 4px 8px;
+        opacity: 0.7;
+        white-space: nowrap;
+      }
+      .tooltip-measure {
+        opacity: 1;
+        font-weight: bold;
+      }
+      .tooltip-static {
+        background-color: #ffcc33;
+        color: black;
+        border: 1px solid white;
+      }
+      .tooltip-measure:before,
+      .tooltip-static:before {
+        border-top: 6px solid rgba(0, 0, 0, 0.5);
+        border-right: 6px solid transparent;
+        border-left: 6px solid transparent;
+        content: "";
+        position: absolute;
+        bottom: -6px;
+        margin-left: -7px;
+        left: 50%;
+      }
+      .tooltip-static:before {
+        border-top-color: #ffcc33;
+      }   
+      .ol-geocoder.gcd-txt-container {
+        position: fixed;
+        width: 150px;
+        height: 40px;
+        top: 5px;
+        right: 90px;
+        box-sizing: border-box;
+        border: 1px solid #101215;
+        border-radius: 4px;
+        z-index: 9999;
+      }
+      .ol-geocoder ul.gcd-txt-result {
+        top: 45px;
+      }
+  /*sidenav herramientas*/
+
+.moveSideButtonLayersOpened {
+        position: fixed; top: 40%; left: 275px; font-size: 8px;z-index: 1;
+        transition-timing-function: ease;  transition-duration: 0.25s;
+        height: 90px;
+        width: 45px;
+        border-bottom-right-radius: 90px;
+        border-top-right-radius: 90px;
+        padding-right: 7.5px;
+        cursor: pointer;
+        color: ghostwhite;
+        background-color: #417d97 !important;
+      }
+      .moveSideButtonLayersClosed {
+        position: fixed; top: 40%; left: -5px; font-size: 8px;z-index: 1;
+        transition-timing-function: ease; transition-duration: 0.25s;
+        height: 90px;
+        width: 45px;
+        border-bottom-right-radius: 90px;
+        border-top-right-radius: 90px;
+        padding-right: 7.5px;
+        cursor: pointer;
+        color: ghostwhite;
+        background-color: #417d97 !important;
+      }
+      .moveSideButtonToolsOpened {
+        position: fixed; top: 40%; right: 275px; font-size: 8px;z-index: 1;
+        transition-timing-function: ease;  transition-duration: 0.25s;
+        height: 90px;
+        width: 45px;
+        border-bottom-left-radius: 90px;
+        border-top-left-radius: 90px;
+        padding-left: 7.5px;
+        cursor: pointer;
+        color: ghostwhite;
+        background-color: #417d97 !important;
+
+      }
+      .moveSideButtonToolsClosed {
+        position: fixed; top: 40%; right: -5px; font-size: 8px;z-index: 1;
+        transition-timing-function: ease; transition-duration: 0.25s;
+        height: 90px;
+        width: 45px;
+        border-bottom-left-radius: 90px;
+        border-top-left-radius: 90px;
+        padding-left: 7.5px;
+        cursor: pointer;
+        color: ghostwhite;
+        background-color: #417d97 !important;
+
+      }
+
+md-sidenav {
+    box-sizing: border-box;
+    position: absolute;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    z-index: 60;
+    width: 275px;
+    max-width: 275px;
+    bottom: 0;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.md-button {
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+    min-height: 36px;
+    min-width: 46.5px;
+    line-height: 36px;
+    padding-top: 10px;
+}
+
+md-checkbox.md-default-theme.md-checked .md-icon, md-checkbox.md-checked .md-icon{
+  background-color: #c4dbdf;
+}
+
+.legend {
+  margin-top:5px;margin-bottom:5px;margin-left:2.5px;margin-right:2.5px;
+}
+
+.textLogin{
+        display: block;
+        position: absolute;
+        top: 1em;
+        left: 50%;
+        color: white;
+        z-index: 9999;
+        font: italic 14px Verdana;
+
+      }
+
+      .ol-custom-overviewmap,
+      .ol-custom-overviewmap.ol-uncollapsible {
+        top: auto;
+        right: auto;
+        left: 0;
+        bottom: 0;
+      }
+
+      .ol-custom-overviewmap:not(.ol-collapsed)  {
+        border: 1px solid black;
+      }
+
+      .ol-custom-overviewmap .ol-overviewmap-map {
+        border: none;
+        width: 250px;
+      }
+
+      .ol-custom-overviewmap .ol-overviewmap-box {
+        border: 2px solid red;
+      }
+
+      .ol-custom-overviewmap:not(.ol-collapsed) button{
+        bottom: auto;
+        right: auto;
+        left: 1px;
+        bottom: 1px;
+        display: none;
+      }
+	  
+	  /* SLIDER */
+	  .slidecontainer {
+  width: 25%;
+  position: fixed;
+  display: block;
+  bottom: 25px;
+  height: auto;
+  margin-left: 40em;
+  margin-right: 40em;
+}
+
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 15px;
+  border-radius: 5px;
+  background: #4f4a4a;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider2 {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 10px;
+  border-radius: 5px;
+  background: #4f4a4a;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider:hover {
+  opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: #262121;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: #262121;
+  cursor: pointer;
+}
+
+.range-slider__value {
+    display: inline-block;
+    position: relative;
+    width: 60px;
+    color: #fff;
+    line-height: 20px;
+    text-align: center;
+    border-radius: 3px;
+    background: #6c757d;
+    padding: 5px 10px;
+    margin-left: 8px;
+}
+
+.range-slider__value:after {
+    position: absolute;
+    top: 8px;
+    left: -7px;
+    width: 0;
+    height: 0;
+    border-top: 7px solid transparent;
+    border-right: 7px solid #6c757d;
+    border-bottom: 7px solid transparent;
+    content: '';
+}
+
+.range-slider__value:before {
+	box-sizing: border-box;
+}
+
+.input_range {
+    max-width: 30px;
+    height: 18px;
+    border: 0px solid black;
+    padding-left: 1.5px !important;
+    margin: 1px;
+	text-align: center;
+}
+
+  </style>
+</head>
+
+<body class="fixed-nav sticky-footer bg-dark sidenav-toggled" id="page-top">
+
+<!-- MAPS -->
+  <div class="content-wrapper main container toolRoute">
+    <div class="container-fluid">
+        <div id="contenedor" >
+		
+		<nav class="navbar navbar-light bg-light" style="height:35px; width: 100%; position: fixed; left: 0; top: 0; background-color: #6c757d!important;">
+		  <span style="font-size:20px; color:white; font-family:sans-serif;" class="navbar-brand mb-0 h1">Evolution of public university education (bachelor) in Spain between 2009 and 2015</span>
+		</nav>
+		
+          <div id="olMap" style="height:calc( 100% - 55px );width:100%; left:0;top:35px; position: absolute; background-color: #e2f2fa; z-index:0;"></div>
+          <div id="overviewMap" style="height:150px;width:270px; left:1em;bottom:25px; position: absolute; background-color: #e2f2fa; border: #4f4a4a 1px solid;"></div>
+		  <div id="olMap2" style="height:calc( 100% - 55px );width:50%; left:0;top:35px; position: absolute; background-color: #e2f2fa; z-index:-1;"></div>
+          <div id="overviewMap2" style="height:130px;width:270px; left:1em;bottom:25px; position: absolute; background-color: #e2f2fa; border: #4f4a4a 1px solid; z-index:-1;"></div>
+		  <div id="olMap3" style="height:calc( 100% - 55px );width:50%; right:0;top:35px; position: absolute; background-color: #e2f2fa; z-index:-1;"></div>
+          <div id="overviewMap3" style="height:130px;width:270px; left:52%;bottom:25px; position: absolute; background-color: #e2f2fa; border: #4f4a4a 1px solid; z-index:-1;"></div>
+		  
+		  <!--<button id="buttonRigthNavSlider" onclick="showRigthNavSlider()" style="position: fixed; display:block; top:0; right:15%; z-index:1;transition:right 0.1s; padding: .7225rem 1.225rem;"> </br></button>-->
+		  
+			<button id="buttonRigthNavSlider" onclick="showRigthNavSlider()" style="position: fixed; display:block; top:35px; right:15%; z-index:1;transition:right 0.1s; padding: .7225rem 0.7225rem; border-bottom-left-radius: 50%;" class="header__menu-button toggle-menu is-active">
+			  <div class="header__menu-button-content">
+				<div class="header__menu-button-icon">
+				  <span class="icon--menu"></span>
+				</div>
+			  </div>
+			</button>
+		  
+		  <div id="rigthNavSlider" style="position: fixed; display:block; width:15%; height:calc( 100% - 35px ); top:35px; right:0;z-index=1;transition: width 0.1s;">
+		  <div class="card" style="height:35%;">
+			  <div class="card-header" style="background-color:rgba(82, 154, 216, 0.79); color:white; font-size:16px; padding: 7px;
+    text-align: center;">
+				Variables
+			  </div>
+			  <div class="card-body" style="overflow:auto;">
+				<!--<h6 class="card-title">Variables</h6>-->
+				
+					 <!-- CHECK BOXES -->
+					 <div id="variableScholarships" >
+					<form name="myForm">
+						<input type="checkbox" name="var2" value="scholarships"> Scholarships <br>
+					</form>
+				  </div>
+				  <br>
+				   <div id="variables">
+					<form name="variables">
+					  <input type="checkbox" name="var" value="students"> Students <br>
+					  <input type="checkbox" name="var" value="fees"> Fees (students * fees)<br>
+					  <input type="checkbox" name="var" value="spent"> Spent <br>
+					</form>
+				  </div>
+				  
+				   <div id="variables2" style="display:none; z-index:-1;">
+					<form name="variables2">
+					  <input type="checkbox" name="var" value="students"> Students<br>
+					  <input type="checkbox" name="var" value="fees"> Fees (students * fees)<br>
+					  <input type="checkbox" name="var" value="spent"> Spent  <br>
+					</form>
+				  </div>
+				  <!-- END CHECK BOXES -->
+				  
+				  <!-- COMPARE -->
+				  <div>
+					<br>
+					<button id="buttonCompare" class="btn btn-secondary" style="width: 100%; font-size:14px;" onclick="compareFunction();">Compare variables</button>
+				  </div>
+				  
+				<!-- END COMPARE -->
+		
+				  </div>
+				  </div>
+				<div id="queries"   class="card" style="height:65%;padding-bottom: 15px;">
+				  <div class="card-header" style="background-color:rgba(82, 154, 216, 0.79); color:white; font-size:16px; padding: 7px;
+    text-align: center;">
+					Queries
+					</div>
+				
+				<div class="card-body" style="overflow:auto;">
+				  <!-- QUERIES -->
+				  
+					<form name="selects">
+											
+						<div style="display:flex; flex-direction:row;">
+							<p>Scholarships &nbsp;</p>
+							<p> (</p>
+							<input class="input_range" type="text" value="0" id="myRange4" name="select3">
+							<p> -</p>
+							<input class="input_range" type="text" value="0" id="myRange42" name="select31">
+							<p> ) </p>
+						</div>
+						<div style="display:flex; flex-direction:row;">
+							<div id="slider-range-scholarships" style="width:100%;"></div>
+						</div>
+						<br>
+						<div style="display:flex; flex-direction:row;">
+							<p>Students &nbsp;</p>
+							<p> (</p>
+							<input class="input_range" type="text" value="0" id="myRange5" name="select4">
+							<p>- </p>
+							<input class="input_range" type="text" value="0" id="myRange52" name="select41">
+							<p>)</p>
+						</div>
+						<div style="display:flex; flex-direction:row;">
+							<div id="slider-range-students" style="width:100%;"></div>
+						</div>
+						<br>
+						<div style="display:flex; flex-direction:row;">
+							<p>Fees &nbsp;</p>
+							<p> (</p>
+							<input class="input_range" type="text" value="0" id="myRange3" name="select2">
+							<p>- </p>
+							<input class="input_range" type="text" value="0" id="myRange32" name="select21">
+							<p> ) </p>
+						</div>
+						<div style="display:flex; flex-direction:row;">
+							<div id="slider-range-fees" style="width:100%;"></div>
+						</div>
+						<br>
+						<div style="display:flex; flex-direction:row;">
+							<p>Spent &nbsp;</p>
+							<p> (</p>
+							<input class="input_range" type="text" value="0" id="myRange2" name="select1">
+							<p> - </p>
+							<input class="input_range" type="text" value="0" id="myRange22" name="select11">
+							<p> ) </p>
+						</div>
+						<div style="display:flex; flex-direction:row;">
+							<div id="slider-range-spent" style="width:100%;"></div>
+						</div>
+						
+					</form>
+					<br>
+					<div style="display:flex; flex-direction:row;">
+						<button class="btn btn-secondary" style="width: 100%; font-size:14px; margin:1px;" onclick="selectQuery();">Select</button>
+						<button class="btn btn-secondary" style="width: 100%; font-size:14px; margin:1px;" onclick="clearQuery();">Clear</button>
+					</div>
+				  <br>
+				  <!-- END QUERIES -->
+				  
+			  </div>
+			  </div>
+			</div>
+		  </div>
+		  
+        </div>
+    </div>
+ 
+  
+ <!-- END MAPS -->
+  
+ <!-- CHECK BOXES -->
+   <!--<div id="variableScholarships" style="position:fixed; display:block; background-color:white; width:100px; height:30px; right:50px; top:50px">
+	<form name="myForm">
+		<input type="checkbox" name="var2" value="scholarships"> scholarships  <br>
+	</form>
+  </div>-->
+  
+    <div id="variableScholarships2" style="position:fixed; display:none; background-color:blue; width:100px; height:30px; right:600px; top:50px; z-index:-1;">
+	<form name="myForm2">
+		<input type="checkbox" name="var2" value="scholarships" checked> scholarships  <br>
+	</form>
+  </div>
+
+  <!--<div id="variables2" style="position:fixed; display:block; background-color:blue; width:100px; height:100px; right:50px; top:100px; z-index:-1;">
+					<form name="variables2">
+					  <input type="checkbox" name="var" value="students"> students<br>
+					  <input type="checkbox" name="var" value="fees"> fees<br>
+					  <input type="checkbox" name="var" value="spent"> spent  <br>
+					</form>
+				  </div>-->
+  
+ 
+  <!-- END CHECK BOXES -->
+  
+ <!-- END QUERIES -->
+ 
+<!-- SLIDER TIME -->
+ <div class="slidecontainer" style="display:flex;">
+  <input type="range" min="2009" max="2015" value="2012" class="slider" id="myRange">
+  <span id="year_text" style="bottom:10px;" class="range-slider__value">2012</span>
+ </div>
+<!-- END SLIDER TIME -->
+
+<!-- LEGEND -->
+<button id="buttonLegend" onclick="showLegend()" style="position: fixed; display:block; top:35px; left:15%; z-index:1;transition:left 0.1s; padding: .7225rem 0.7225rem; border-bottom-right-radius: 50%;" class="header__menu-button toggle-menu is-active">
+  <div class="header__menu-button-content">
+	<div class="header__menu-button-icon">
+	  <span class="icon--menu"></span>
+	</div>
+  </div>
+</button>
+<div id="legend" class="card" style="position:fixed; width:15%;  left:0; top:35px; display:block; height:auto; z-index=1; transition: width 0.1s;">
+  <div class="card-header" style="background-color:rgba(82, 154, 216, 0.79); color:white; font-size:16px; padding: 7px;
+    text-align: center;">
+	Legend
+  </div>
+  <div class="card-body" id="canvas_container" style="overflow:auto; display:flex; flex-direction:column; padding: 5px !important;">
+	<p id="text1" style="margin-bottom: 0;"></p>
+  <div id="canvas_container1" style=" display:flex; flex-direction:row; align-items: baseline;">
+    
+	<div id="canvas_container11" style="margin: 5px;"></div>
+	<div id="canvas_container12" style="margin: 5px;"></div>
+	<div id="canvas_container13" style="margin: 5px;"></div>
+  </div>
+  
+  <p id="text2" style="margin-bottom: 0;"></p>
+  <div id="canvas_container2" style="display:flex; flex-direction:row; align-items: baseline;">
+	<div id="canvas_container21" style="margin: 3px;"></div>
+	<div id="canvas_container22" style="margin: 3px;"></div>
+	<div id="canvas_container23" style="margin: 3px;"></div>
+  </div>
+  
+  <p id="text3" style="margin-bottom: 0;"></p>
+  <div id="canvas_container3" style="display:flex; flex-direction:row; align-items: baseline;">
+	<div id="canvas_container31" style="margin: 3px;"></div>
+	<div id="canvas_container32" style="margin: 3px;"></div>
+	<div id="canvas_container33" style="margin: 3px;"></div>
+  </div>
+  
+  <p id="text4" style="margin-bottom: 0;"></p>
+  <div id="canvas_container4" style="display:flex; flex-direction:row; align-items: baseline;">
+	<div id="canvas_container41" style="margin: 5px;"></div>
+	<div id="canvas_container42" style="margin: 5px;"></div>
+	<div id="canvas_container43" style="margin: 5px;"></div>
+  </div>
+  
+  <p id="text6" style="margin-bottom: 0;"></p>
+  <div id="canvas_container6" style="display:flex; flex-direction:row; align-items: baseline;">
+	<div id="canvas_container61" style="margin: 0px;"></div>
+	<div id="canvas_container62" style="margin: 0px;"></div>
+	<div id="canvas_container63" style="margin: 0px;"></div>
+  </div>
+  
+  <p id="text5" style="margin-bottom: 0;"></p>
+   <div id="canvas_container5" style="display:flex; flex-direction:row; align-items: baseline;">
+	<div id="canvas_container51" style="margin: 0px;"></div>
+	<div id="canvas_container52" style="margin: 0px;"></div>
+	<div id="canvas_container53" style="margin: 0px;"></div>
+  </div>
+  </div>
+</div>
+
+<!-- END LEGEND -->
+
+<nav class="navbar navbar-light bg-light" style="height:20px; width: 100%; position: fixed; left: 0; bottom: 0; background-color: #6c757d!important;">
+		  <span style="font-size:12px; color:white; font-family:sans-serif;" class="navbar-brand mb-0 h1">&nbsp&nbsp&nbsp&nbsp&nbsp Developed by: Raquel Luján &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp-&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Lambert Azimutal Equal-Area Projection &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp-&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Data Source: Ministry of Education of Spain</span>
+</nav>
+
+
+<script>
+	/*var legend = document.getElementById('canvas_container');
+	while (legend.firstChild) {
+		legend.removeChild(legend.firstChild);
+	{*/
+</script>
+<!-- IMPORT JS -->
+  <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/ol3/4.0.1/ol.js"></script>-->
+  <script type="text/javascript" src="js/ol.js"></script>
+  <script type="text/javascript" src="js/regions.js"></script>
+  <script type="text/javascript" src="js/centroids.js"></script>
+  <script type="text/javascript" src="js/basemap.js"></script>
+  <script type="text/javascript" src="js/Africa.js"></script>
+  <script type="text/javascript" src="js/scholarships.js"></script>
+  <script type="text/javascript" src="js/scholarships2.js"></script>
+  <script type="text/javascript" src="js/variables.js"></script>
+  <script type="text/javascript" src="js/compare.js"></script>
+  <script type="text/javascript" src="js/maps.js"></script>
+  <script type="text/javascript" src="js/slider_time.js"></script>
+  <script type="text/javascript" src="js/loop.js"></script>
+  <script type="text/javascript" src="js/change_variable.js"></script>
+  <script type="text/javascript" src="js/select_query.js"></script>
+<!-- END IMPORT JS --> 
+ 
+<!-- GLOBAL VARIABLES -->
+<script>
+  
+	window.year_var = '2012';
+	window.info_var = "";
+	window.info_var2 = "";
+	window.info_var3 = "";
+	window.info_vars2 = "";
+	window.info_vara2 = "";
+
+</script>
+<!-- END GLOBAL VARIABLES -->
+
+<script>
+	var openRightNavSlider = true;
+var showRigthNavSlider = function() {
+	var rigthNavSlider = document.getElementById('rigthNavSlider');
+	if (openRightNavSlider == true) {
+		openRightNavSlider = false;
+		rigthNavSlider.style.width = '0%';
+		var buttonRigthNavSlider = document.getElementById('buttonRigthNavSlider');
+		buttonRigthNavSlider.style.right='0';
+	} 
+	
+	else {
+		openRightNavSlider = true;
+		rigthNavSlider.style.width = '15%';
+		var buttonRigthNavSlider = document.getElementById('buttonRigthNavSlider');
+		buttonRigthNavSlider.style.right='15%';
+	}
+
+};
+    $('#buttonRigthNavSlider').on('click', function(e) {
+        $(this).toggleClass("is-active"); 
+        e.preventDefault();
+    });
+	
+var openLegend = true;
+var showLegend = function() {
+	var legend = document.getElementById('legend');
+	if (openLegend == true) {
+		openLegend = false;
+		legend.style.width = '0%';
+		legend.style.display = 'none';
+		var buttonLegend = document.getElementById('buttonLegend');
+		buttonLegend.style.left='0';
+	} 
+	
+	else {
+		openLegend = true;
+		legend.style.width = '15%';
+		legend.style.display = 'block';
+		var buttonLegend = document.getElementById('buttonLegend');
+		buttonLegend.style.left='15%';
+	}
+
+};
+    $('#buttonLegend').on('click', function(e) {
+        $(this).toggleClass("is-active"); 
+        e.preventDefault();
+    });
+
+</script>
+
+<script>
+
+
+    // change zoom with available height screen
+
+    window.onresize = function()
+
+    {
+
+      setTimeout( function() {
+
+        // MAKE CSS AVAILABLE FOR HEIGHT 698 AND WIDTH 1242
+
+        window.zoomLevelFromWindow();
+
+      }, 200);
+
+    }
+
+    window.zoomLevelFromWindow = function() {
+
+      var screenCssPixelRatio = (window.outerWidth - 8) / window.innerWidth;
+
+      if (screenCssPixelRatio >= .46 && screenCssPixelRatio <= .54) {
+
+        zoomLevel = "-4";
+
+        window.defaultZoom = 9;
+
+      } else if (screenCssPixelRatio <= .64) {
+
+        zoomLevel = "-3";
+
+        window.defaultZoom = 8.5;
+
+      } else if (screenCssPixelRatio <= .76) {
+
+        zoomLevel = "-2";
+
+        window.defaultZoom = 8.5;
+
+      } else if (screenCssPixelRatio <= .92) {
+
+        zoomLevel = "-1";
+
+        window.defaultZoom = 8;
+
+      } else if (screenCssPixelRatio <= 1.10) {
+
+        zoomLevel = "0";
+
+        window.defaultZoom = 6.75;
+
+      } else if (screenCssPixelRatio <= 1.32) {
+
+        zoomLevel = "1";
+
+        window.defaultZoom = 6.75;
+
+      } else if (screenCssPixelRatio <= 1.58) {
+
+        zoomLevel = "2";
+
+        window.defaultZoom = 6.75;
+
+      } else if (screenCssPixelRatio <= 1.90) {
+
+        zoomLevel = "3";
+
+        window.defaultZoom = 6.75;
+
+      } else if (screenCssPixelRatio <= 2.28) {
+
+        zoomLevel = "4";
+
+        window.defaultZoom = 6.25;
+
+      } else if (screenCssPixelRatio <= 2.70) {
+
+        zoomLevel = "5";
+
+        window.defaultZoom = 6;
+
+      } else {
+
+        zoomLevel = "unknown";
+
+      }
+
+      if (window.innerHeight >= 500 && window.innerHeight <= 600) {
+
+        window.defaultZoom = window.defaultZoom - 0.25; //window.defaultZoom = 6.50;
+
+      }  else if (window.innerHeight <= 650) {
+
+        window.defaultZoom = window.defaultZoom - 0.15; //window.defaultZoom = 6.70;
+
+      } else if (window.innerHeight <= 700) {
+
+        window.defaultZoom = window.defaultZoom - 0.10; //window.defaultZoom = 6.9;
+
+      } else if (window.innerHeight <= 750) {
+
+        window.defaultZoom = window.defaultZoom - 0.05; //window.defaultZoom = 6.9;
+
+      } else if (window.innerHeight <= 800) {
+
+        window.defaultZoom = window.defaultZoom - 0.00; //window.defaultZoom = 6.9;
+
+      }
+
+      console.log(window.outerWidth, window.innerWidth, zoomLevel);
+
+      olMap.updateSize();
+
+      olMap.getView().setZoom(window.defaultZoom);
+	  olMap.getView().setMinZoom(window.defaultZoom);
+	  olMap.getView().setMaxZoom(window.defaultZoom);
+
+    }
+</script>
+
+</body>
+
+</html>
